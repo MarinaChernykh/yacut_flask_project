@@ -3,7 +3,7 @@ from random import sample
 
 from flask import flash, redirect, render_template, url_for
 
-from . import app, db
+from . import app
 from .forms import URLMapForm
 from .models import URLMap
 from .constants import SHORT_URL_MIN_SIZE
@@ -24,8 +24,7 @@ def index_view():
             original=form.original_link.data,
             short=short,
         )
-        db.session.add(url)
-        db.session.commit()
+        url.create_record()
         flash('Ваша новая ссылка готова', url_for("original_url_view", short=short, _external=True))
         return render_template('index.html', form=form)
     return render_template('index.html', form=form)

@@ -1,8 +1,9 @@
 import re
+from http import HTTPStatus
 
 from flask import jsonify, request
 
-from . import app, db
+from . import app
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
 from .views import get_unique_short_id
@@ -29,9 +30,8 @@ def create_url():
             raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
     url = URLMap()
     url.from_dict(data)
-    db.session.add(url)
-    db.session.commit()
-    return jsonify(url.to_dict()), 201
+    url.create_record()
+    return jsonify(url.to_dict()), HTTPStatus.CREATED
 
 
 @app.route('/api/id/<string:short_id>/', methods=('GET',))
@@ -39,5 +39,5 @@ def get_url(short_id):
     """Возвращает полную версию ссылки."""
     url = URLMap.query.filter_by(short=short_id).first()
     if url is None:
-        raise InvalidAPIUsage('Указанный id не найден', 404)
-    return jsonify({'url': url.original}), 200
+        raise InvalidAPIUsage('Указанный id не найден', HTTPStatus.NOT_FOUND)
+    return jsonify({'url': url.original}), HTTPStatus.OK

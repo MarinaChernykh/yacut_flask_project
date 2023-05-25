@@ -22,7 +22,7 @@ class URLMapForm(FlaskForm):
         validators=(
             Length(
                 min=1, max=SHORT_URL_MAX_SIZE,
-                message='Запись должна включать от 6 до 16 символов'
+                message='Запись должна включать до 16 символов'
             ),
             Regexp(
                 SHORT_URL_PATTERN,
